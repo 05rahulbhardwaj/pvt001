@@ -2,50 +2,51 @@
 
 import React, { useState } from 'react';
 import { Wind, Anchor, BookOpen, PenTool, CheckCircle, Clock } from 'lucide-react';
-
-interface ActivityItem {
-  id: string;
-  title: string;
-  desc: string;
-  duration: string;
-  category: string;
-  icon: React.ElementType;
-}
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function ActivitiesModule() {
+  const { language, t } = useLanguage();
   const [completed, setCompleted] = useState<Record<string, boolean>>({});
 
-  const activities: ActivityItem[] = [
+  const activities = [
     {
       id: 'act-1',
-      title: '4-7-8 Atemregulation',
-      desc: 'Beruhigt das vegetative Nervensystem bei akuter Anspannung oder Grübeln.',
+      title: language === 'de' ? '4-7-8 Atemregulation' : '4-7-8 Breathing Regulation',
+      desc: language === 'de'
+        ? 'Beruhigt das vegetative Nervensystem bei akuter Anspannung oder Grübeln.'
+        : 'Soothes the autonomic nervous system during acute tension or racing thoughts.',
       duration: '4 Min.',
-      category: 'Atemübung',
+      category: language === 'de' ? 'Atemübung' : 'Breathing',
       icon: Wind,
     },
     {
       id: 'act-2',
-      title: '5-4-3-2-1 Sinnes-Erdung',
-      desc: 'Bringt Sie zurück in die Gegenwart bei Reizüberflutung oder Panikempfinden.',
+      title: language === 'de' ? '5-4-3-2-1 Sinnes-Erdung' : '5-4-3-2-1 Sensory Grounding',
+      desc: language === 'de'
+        ? 'Bringt Sie zurück in die Gegenwart bei Reizüberflutung oder Panikempfinden.'
+        : 'Anchors you back into the present moment during sensory overload or panic.',
       duration: '3 Min.',
-      category: 'Erdung',
+      category: language === 'de' ? 'Erdung' : 'Grounding',
       icon: Anchor,
     },
     {
       id: 'act-3',
-      title: 'Psychoedukation: Das Angstfenster',
-      desc: 'Warum Symptome in der Wartezeit schwanken und wie man Erwartungsangst abbaut.',
+      title: language === 'de' ? 'Psychoedukation: Das Angstfenster' : 'Psychoeducation: The Anxiety Window',
+      desc: language === 'de'
+        ? 'Warum Symptome in der Wartezeit schwanken und wie man Erwartungsangst abbaut.'
+        : 'Why symptoms fluctuate during wait periods and how to defuse anticipatory fear.',
       duration: '6 Min.',
-      category: 'Wissen',
+      category: language === 'de' ? 'Wissen' : 'Education',
       icon: BookOpen,
     },
     {
       id: 'act-4',
-      title: 'Drei-Punkte-Entlastungstagebuch',
-      desc: 'Strukturiertes Aufschreiben vor dem Schlafen gegen nächtliche Unruhe.',
+      title: language === 'de' ? 'Drei-Punkte-Entlastungstagebuch' : 'Three-Point Relief Journal',
+      desc: language === 'de'
+        ? 'Strukturiertes Aufschreiben vor dem Schlafen gegen nächtliche Unruhe.'
+        : 'Structured bedtime note taking to calm nocturnal rumination.',
       duration: '5 Min.',
-      category: 'Journaling',
+      category: language === 'de' ? 'Journaling' : 'Journaling',
       icon: PenTool,
     },
   ];
@@ -55,62 +56,60 @@ export default function ActivitiesModule() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-emerald-100 p-6 shadow-sm">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-emerald-100 p-5 sm:p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-emerald-950 text-base">Begleitende Übungen</h3>
-          <p className="text-xs text-emerald-700">Evidenzbasierte Mikro-Interventionen</p>
+          <h3 className="font-bold text-emerald-950 text-sm sm:text-base">{t.activitiesTitle}</h3>
+          <p className="text-xs text-emerald-700">{t.activitiesSubtitle}</p>
         </div>
-        <span className="text-xs text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full font-medium border border-emerald-200">
-          Algorithmus-Empfehlung
-        </span>
       </div>
 
       <div className="space-y-3">
-        {activities.map((a) => {
-          const Icon = a.icon;
-          const isDone = completed[a.id];
+        {activities.map(act => {
+          const Icon = act.icon;
+          const isDone = !!completed[act.id];
 
           return (
             <div
-              key={a.id}
-              className={`p-4 rounded-xl border transition-all ${
+              key={act.id}
+              onClick={() => toggleComplete(act.id)}
+              className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex items-start justify-between gap-3 ${
                 isDone
-                  ? 'bg-emerald-50/40 border-emerald-200 opacity-75'
-                  : 'bg-white border-emerald-100 hover:border-emerald-300 hover:shadow-xs'
+                  ? 'bg-emerald-50/40 border-emerald-300 opacity-80'
+                  : 'bg-white border-emerald-100 hover:border-emerald-300 hover:bg-emerald-50/30'
               }`}
             >
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3">
-                  <div className={`p-2.5 rounded-lg flex-shrink-0 ${isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-50 text-emerald-700'}`}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className={`text-sm font-semibold ${isDone ? 'line-through text-emerald-900/60' : 'text-emerald-950'}`}>
-                      {a.title}
+              <div className="flex items-start gap-3">
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 ${
+                  isDone ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'
+                }`}>
+                  <Icon className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h4 className={`text-xs sm:text-sm font-semibold ${isDone ? 'line-through text-emerald-800' : 'text-emerald-950'}`}>
+                      {act.title}
                     </h4>
-                    <p className="text-xs text-emerald-800/80 mt-0.5">{a.desc}</p>
-                    <div className="flex items-center gap-3 mt-2 text-[11px] text-emerald-700 font-medium">
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" /> {a.duration}
-                      </span>
-                      <span>•</span>
-                      <span>{a.category}</span>
-                    </div>
+                    <span className="text-[10px] bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">
+                      {act.category}
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-700/90 mt-1 leading-snug">
+                    {act.desc}
+                  </p>
+                  <div className="flex items-center gap-1.5 text-[10px] text-emerald-600 font-medium mt-1.5">
+                    <Clock className="w-3 h-3" />
+                    <span>{act.duration}</span>
                   </div>
                 </div>
+              </div>
 
-                <button
-                  onClick={() => toggleComplete(a.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-colors flex-shrink-0 ${
-                    isDone
-                      ? 'bg-emerald-100 text-emerald-800'
-                      : 'bg-emerald-600 hover:bg-emerald-700 text-white'
-                  }`}
-                >
-                  <CheckCircle className="w-3.5 h-3.5" />
-                  <span>{isDone ? 'Erledigt' : 'Starten'}</span>
-                </button>
+              <div className="flex-shrink-0">
+                <div className={`w-6 h-6 rounded-lg flex items-center justify-center border transition-all ${
+                  isDone ? 'bg-emerald-600 border-emerald-600 text-white' : 'border-emerald-200 bg-emerald-50/50'
+                }`}>
+                  {isDone && <CheckCircle className="w-4 h-4" />}
+                </div>
               </div>
             </div>
           );

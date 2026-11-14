@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "@/lib/patch-remove-child";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 export const metadata: Metadata = {
   title: "Brücke • MagdeHack Psychotherapie-Begleitung",
@@ -38,7 +39,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: domPatchScript }} />
       </head>
       <body className="min-h-full flex flex-col notranslate" suppressHydrationWarning>
-        {children}
+        <LanguageProvider>
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );
